@@ -1,0 +1,70 @@
+------------------------------------------------------------
+-- HOSPITAL MANAGEMENT SYSTEM (VDM FUNCTIONAL SPECIFICATION)
+------------------------------------------------------------
+
+types
+
+PATIENT = token;
+ROOM = token;
+DOCTOR = token;
+
+PatientStatus = <normal> | <critical> | <discharged>;
+
+------------------------------------------------------------
+-- 1. addPatient
+------------------------------------------------------------
+
+addPatient: set of PATIENT * PATIENT -> set of PATIENT
+addPatient(patients, p) ==
+    patients union {p}
+
+pre p not in set patients
+post RESULT = patients union {p};
+
+
+------------------------------------------------------------
+-- 2. allocateRoom
+------------------------------------------------------------
+
+allocateRoom: map PATIENT to ROOM * PATIENT * ROOM -> map PATIENT to ROOM
+allocateRoom(assignedRoom, p, r) ==
+    assignedRoom munion {p |-> r}
+
+pre p not in set dom assignedRoom and r not in set rng assignedRoom
+post RESULT = assignedRoom munion {p |-> r};
+
+
+------------------------------------------------------------
+-- 3. discharge
+------------------------------------------------------------
+
+discharge: set of PATIENT * PATIENT -> set of PATIENT
+discharge(admitted, p) ==
+    admitted \ {p}
+
+pre p in set admitted
+post RESULT = admitted \ {p};
+
+
+------------------------------------------------------------
+-- 4. assignDoctor
+------------------------------------------------------------
+
+assignDoctor: map PATIENT to DOCTOR * PATIENT * DOCTOR -> map PATIENT to DOCTOR
+assignDoctor(doctorAssignment, p, d) ==
+    doctorAssignment munion {p |-> d}
+
+pre p not in set dom doctorAssignment
+post RESULT = doctorAssignment munion {p |-> d};
+
+
+------------------------------------------------------------
+-- 5. markCritical
+------------------------------------------------------------
+
+markCritical: map PATIENT to PatientStatus * PATIENT -> map PATIENT to PatientStatus
+markCritical(patientStatus, p) ==
+    patientStatus ++ {p |-> <critical>}
+
+pre p in set dom patientStatus
+post RESULT = patientStatus ++ {p |-> <critical>};
